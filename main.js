@@ -2,11 +2,10 @@ let inp = document.getElementById("file");
 let outPutContainer = document.getElementById("outPutContainer");
 
 function csvToArray(str, delimiter = ",") {
-  // slice from start of text to the first \n index
-  // use split to create an array from string by delimiter
+  // define columns
   const headers = ["id", "area", "name", "quantity", "brand"];
 
-  // slice from \n index + 1 to the end of the text
+  // slice from \n index to the end of the text
   // use split to create an array of each csv value row
   const rows = str.split("\n");
   // Map the rows
@@ -27,11 +26,6 @@ function csvToArray(str, delimiter = ",") {
 }
 
 function groupByName(arr = [], attr = "name") {
-  // area: "Minneapolis"
-  // "brand ": "Air\r"
-  // id: "ID"
-  // name: "shoes"
-  // quantity: "2"
   let grouped = {};
   arr.forEach(function (a, i) {
     grouped[a[attr]] = grouped[a[attr]] || [];
@@ -47,8 +41,12 @@ function getPopular(brandArr = []) {
   };
   const grouped = groupByName(brandArr, "brand");
   Object.keys(grouped).map(function (key, index) {
-    if (temp.max < grouped[key].length) {
-      temp.max = grouped[key].length;
+    let max = grouped[key].reduce(
+      (prev, current) => +current.quantity + prev,
+      0
+    );
+    if (max > temp.max) {
+      temp.max = max;
       temp.brand = key;
     }
   });
